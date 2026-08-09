@@ -1,0 +1,35 @@
+@model AppointmentDto
+@{
+    ViewData["Title"] = "Appointment Details";
+}
+<h1>Appointment #@Model.Id <span class="status-badge status-@Model.Status">@Model.Status</span></h1>
+<dl class="row">
+    <dt class="col-sm-3">Doctor</dt><dd class="col-sm-9">@Model.DoctorName</dd>
+    <dt class="col-sm-3">Patient</dt><dd class="col-sm-9">@Model.PatientName</dd>
+    <dt class="col-sm-3">Date/Time</dt><dd class="col-sm-9">@Model.AppointmentDate.ToString("f")</dd>
+    <dt class="col-sm-3">Notes</dt><dd class="col-sm-9">@Model.Notes</dd>
+    @if (Model.Status == AppointmentStatus.Cancelled)
+    {
+        <dt class="col-sm-3">Cancellation reason</dt><dd class="col-sm-9">@Model.CancellationReason</dd>
+    }
+</dl>
+
+<div class="d-flex gap-2">
+    @if (Model.Status == AppointmentStatus.Pending)
+    {
+        <form method="post" asp-action="Confirm" asp-route-id="@Model.Id">
+            <button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
+    }
+    @if (Model.Status == AppointmentStatus.Confirmed)
+    {
+        <form method="post" asp-action="Complete" asp-route-id="@Model.Id">
+            <button type="submit" class="btn btn-success">Mark Completed</button>
+        </form>
+    }
+    @if (Model.Status is AppointmentStatus.Pending or AppointmentStatus.Confirmed)
+    {
+        <a class="btn btn-outline-danger" asp-action="Cancel" asp-route-id="@Model.Id">Cancel</a>
+    }
+    <a class="btn btn-link" asp-action="Index">Back to list</a>
+</div>

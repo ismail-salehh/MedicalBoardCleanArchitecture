@@ -1,0 +1,50 @@
+@model CreateDoctorDto
+@{
+    ViewData["Title"] = "New Doctor";
+    var departments = ViewBag.Departments as List<DepartmentDto> ?? new();
+}
+<h1>New Doctor</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form method="post" class="col-md-6">
+    <div class="mb-3">
+        <label asp-for="EmployeeNumber" class="form-label"></label>
+        <input asp-for="EmployeeNumber" class="form-control" />
+        <span asp-validation-for="EmployeeNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Specialty" class="form-label"></label>
+        <input asp-for="Specialty" class="form-control" />
+        <span asp-validation-for="Specialty" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="DepartmentId" class="form-label"></label>
+        <select asp-for="DepartmentId" class="form-select">
+            <option value="">-- Select department --</option>
+            @foreach (var d in departments)
+            {
+                <option value="@d.Id">@d.Name</option>
+            }
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+        @if (!departments.Any())
+        {
+            <div class="form-text text-danger">No active departments exist yet — create one first.</div>
+        }
+    </div>
+    <div class="mb-3">
+        <label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a class="btn btn-link" asp-action="Index">Cancel</a>
+</form>

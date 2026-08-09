@@ -1,0 +1,43 @@
+@model List<DepartmentDto>
+@{
+    ViewData["Title"] = "Departments";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Departments</h1>
+    <a class="btn btn-primary" asp-action="Create">+ New Department</a>
+</div>
+
+<table class="table table-striped bg-white">
+    <thead>
+        <tr>
+            <th>Name</th><th>Code</th><th>Doctors</th><th>Status</th><th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var d in Model)
+    {
+        <tr>
+            <td><a asp-action="Details" asp-route-id="@d.Id">@d.Name</a></td>
+            <td>@d.Code</td>
+            <td>@d.DoctorCount</td>
+            <td>
+                @if (d.IsActive)
+                {
+                    <span class="badge bg-success">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Inactive</span>
+                }
+            </td>
+            <td class="table-actions">
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@d.Id">Edit</a>
+                <form method="post" asp-action="ToggleActive" asp-route-id="@d.Id">
+                    <input type="hidden" name="isActive" value="@(!d.IsActive)" />
+                    <button type="submit" class="btn btn-sm btn-outline-dark">@(d.IsActive ? "Deactivate" : "Activate")</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

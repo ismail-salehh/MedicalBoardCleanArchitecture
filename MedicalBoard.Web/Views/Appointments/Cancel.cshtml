@@ -1,0 +1,16 @@
+@model CancelAppointmentDto
+@{
+    ViewData["Title"] = "Cancel Appointment";
+}
+<h1>Cancel Appointment #@Model.Id</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form method="post" class="col-md-6">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="CancellationReason" class="form-label"></label>
+        <textarea asp-for="CancellationReason" class="form-control"></textarea>
+        <span asp-validation-for="CancellationReason" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+    <a class="btn btn-link" asp-action="Details" asp-route-id="@Model.Id">Back</a>
+</form>

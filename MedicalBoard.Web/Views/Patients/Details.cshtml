@@ -1,0 +1,15 @@
+@model PatientDto
+@{
+    ViewData["Title"] = "Patient Details";
+}
+<h1>@Model.FullName</h1>
+<dl class="row">
+    <dt class="col-sm-3">Patient #</dt><dd class="col-sm-9">@Model.PatientNumber</dd>
+    <dt class="col-sm-3">National ID</dt><dd class="col-sm-9">@Model.NationalIdentifier</dd>
+    <dt class="col-sm-3">Date of birth</dt><dd class="col-sm-9">@Model.DateOfBirth</dd>
+    <dt class="col-sm-3">Phone</dt><dd class="col-sm-9">@Model.Phone</dd>
+    <dt class="col-sm-3">Email</dt><dd class="col-sm-9">@Model.Email</dd>
+    <dt class="col-sm-3">Status</dt><dd class="col-sm-9">@(Model.IsActive ? "Active" : "Inactive")</dd>
+</dl>
+<a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+<a class="btn btn-link" asp-action="Index">Back to list</a>

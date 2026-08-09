@@ -1,0 +1,58 @@
+@model List<AppointmentDto>
+@{
+    ViewData["Title"] = "Appointments";
+    var doctors = ViewBag.Doctors as List<DoctorDto> ?? new();
+    var counts = ViewBag.StatusCounts as Dictionary<AppointmentStatus, int> ?? new();
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Appointments</h1>
+    <a class="btn btn-primary" asp-action="Create">+ New Appointment</a>
+</div>
+
+<div class="row g-2 mb-3">
+    @foreach (AppointmentStatus s in Enum.GetValues<AppointmentStatus>())
+    {
+        <div class="col-auto">
+            <span class="status-badge status-@s">@s: @(counts.TryGetValue(s, out var c) ? c : 0)</span>
+        </div>
+    }
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="doctorId" class="form-select" onchange="this.form.submit()">
+            <option value="">All doctors</option>
+            @foreach (var d in doctors)
+            {
+                <option value="@d.Id" selected="@((ViewBag.SelectedDoctorId == d.Id) ? "selected" : null)">@d.FullName</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All statuses</option>
+            @foreach (AppointmentStatus s in Enum.GetValues<AppointmentStatus>())
+            {
+                <option value="@s" selected="@((ViewBag.SelectedStatus?.Equals(s) == true) ? "selected" : null)">@s</option>
+            }
+        </select>
+    </div>
+</form>
+
+<table class="table table-striped bg-white">
+    <thead>
+        <tr><th>Date/Time</th><th>Doctor</th><th>Patient</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+    @foreach (var a in Model)
+    {
+        <tr>
+            <td>@a.AppointmentDate.ToString("g")</td>
+            <td>@a.DoctorName</td>
+            <td>@a.PatientName</td>
+            <td><span class="status-badge status-@a.Status">@a.Status</span></td>
+            <td><a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@a.Id">View</a></td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,44 @@
+@model CreateAppointmentDto
+@{
+    ViewData["Title"] = "New Appointment";
+    var doctors = ViewBag.Doctors as List<DoctorDto> ?? new();
+    var patients = ViewBag.Patients as List<PatientDto> ?? new();
+}
+<h1>New Appointment</h1>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form method="post" class="col-md-6">
+    <input type="hidden" asp-for="CreatedByUserId" />
+    <div class="mb-3">
+        <label asp-for="DoctorId" class="form-label"></label>
+        <select asp-for="DoctorId" class="form-select">
+            <option value="">-- Select doctor --</option>
+            @foreach (var d in doctors)
+            {
+                <option value="@d.Id">@d.FullName (@d.Specialty)</option>
+            }
+        </select>
+        <span asp-validation-for="DoctorId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PatientId" class="form-label"></label>
+        <select asp-for="PatientId" class="form-select">
+            <option value="">-- Select patient --</option>
+            @foreach (var p in patients)
+            {
+                <option value="@p.Id">@p.FullName (@p.PatientNumber)</option>
+            }
+        </select>
+        <span asp-validation-for="PatientId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="AppointmentDate" class="form-label"></label>
+        <input asp-for="AppointmentDate" class="form-control" type="datetime-local" />
+        <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a class="btn btn-link" asp-action="Index">Cancel</a>
+</form>

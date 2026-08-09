@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<h1>Medical Board</h1>
+<p class="text-muted">Milestone: EF Core database layer + basic CRUD (no authentication yet).</p>
+
+<div class="row g-3 mt-3">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Departments</h5>
+                <a class="btn btn-outline-primary btn-sm" asp-controller="Departments" asp-action="Index">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Doctors</h5>
+                <a class="btn btn-outline-primary btn-sm" asp-controller="Doctors" asp-action="Index">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Patients</h5>
+                <a class="btn btn-outline-primary btn-sm" asp-controller="Patients" asp-action="Index">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Appointments</h5>
+                <a class="btn btn-outline-primary btn-sm" asp-controller="Appointments" asp-action="Index">Manage</a>
+            </div>
+        </div>
+    </div>
+</div>

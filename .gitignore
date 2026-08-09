@@ -1,0 +1,6 @@
+# MedicalBoard.Application/
+# MedicalBoard.Domain/
+# MedicalBoard.Infrastructure/
+*/bin/
+*/obj/
+*/net10.0
