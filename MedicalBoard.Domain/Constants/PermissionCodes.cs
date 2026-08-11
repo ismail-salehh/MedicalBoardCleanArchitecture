@@ -30,8 +30,8 @@ public static class PermissionCodes
 
     public const string ReportView = "Report.View";
 
-    public static readonly IReadOnlyList<string> All = new[]
-    {
+    public static readonly IReadOnlyList<string> All =
+    [
         UserView, UserCreate, UserEdit, UserDeactivate,
         RoleView, RoleEdit, RoleAssignPermission,
         DoctorView, DoctorCreate, DoctorEdit, DoctorDeactivate,
@@ -39,5 +39,5 @@ public static class PermissionCodes
         AppointmentView, AppointmentCreate, AppointmentEdit, AppointmentConfirm,
         AppointmentCancel, AppointmentComplete, AppointmentManageAll,
         ReportView
-    };
+    ];
 }

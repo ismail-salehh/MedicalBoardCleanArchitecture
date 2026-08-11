@@ -43,8 +43,6 @@ public class CreateAppointmentDto
 
     [StringLength(1000)]
     public string? Notes { get; set; }
-
-    // TODO: replace with the authenticated user's id once login/claims exist (Milestone 6).
     public int CreatedByUserId { get; set; }
 }
 

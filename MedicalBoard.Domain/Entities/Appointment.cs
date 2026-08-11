@@ -1,6 +1,5 @@
-// UPDATED VERSION of your existing Appointment.cs -- adds the Cancel()/Confirm()/Complete()
-// domain-rule methods called out in the spec. Replace your current file with this one
-// (or copy just the three methods in).
+// UPDATED VERSION 
+// adds the Cancel()/Confirm()/Complete()
 using MedicalBoard.Domain.Enums;
 using MedicalBoard.Domain.Exceptions;
 

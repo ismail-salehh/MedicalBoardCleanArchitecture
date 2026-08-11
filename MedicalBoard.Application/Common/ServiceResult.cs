@@ -7,12 +7,7 @@ public class ServiceResult
     public IReadOnlyList<string> Errors { get; protected set; } = Array.Empty<string>();
 
     public static ServiceResult Success() => new() { Succeeded = true };
-    public static ServiceResult Failure(string error) => new() { Succeeded = false, Error = error, Errors = new[] { error } };
-    public static ServiceResult Failure(IEnumerable<string> errors)
-    {
-        var list = errors.ToList();
-        return new ServiceResult { Succeeded = false, Errors = list, Error = list.FirstOrDefault() };
-    }
+    public static ServiceResult Failure(string error) => new() { Succeeded = false, Error = error, Errors = [error] };
 }
 
 public class ServiceResult<T> : ServiceResult
@@ -20,10 +15,5 @@ public class ServiceResult<T> : ServiceResult
     public T? Data { get; private set; }
 
     public static ServiceResult<T> Success(T data) => new() { Succeeded = true, Data = data };
-    public new static ServiceResult<T> Failure(string error) => new() { Succeeded = false, Error = error, Errors = new[] { error } };
-    public new static ServiceResult<T> Failure(IEnumerable<string> errors)
-    {
-        var list = errors.ToList();
-        return new ServiceResult<T> { Succeeded = false, Errors = list, Error = list.FirstOrDefault() };
-    }
+    public new static ServiceResult<T> Failure(string error) => new() { Succeeded = false, Error = error, Errors = [error] };
 }

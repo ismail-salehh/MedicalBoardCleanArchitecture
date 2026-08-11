@@ -1,6 +1,3 @@
 namespace MedicalBoard.Domain.Exceptions;
 
-public class DomainRuleViolationException : Exception
-{
-    public DomainRuleViolationException(string message) : base(message) { }
-}
+public class DomainRuleViolationException(string message) : Exception(message){}
