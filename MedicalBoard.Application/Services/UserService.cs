@@ -64,7 +64,7 @@ public class UserService : IUserService
     {
         var usernameTaken = await _context.Users.AnyAsync(u => u.Username == dto.Username, cancellationToken);
         if (usernameTaken)
-            return ServiceResult<int>.Fail("Username is already taken.");
+            return ServiceResult<int>.Failure("Username is already taken.");
 
         var user = new User
         {
@@ -82,7 +82,7 @@ public class UserService : IUserService
         _context.Users.Add(user);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return ServiceResult<int>.Ok(user.Id);
+        return ServiceResult<int>.Success(user.Id);
     }
 
     public async Task<ServiceResult> UpdateAsync(UpdateUserDto dto, CancellationToken cancellationToken = default)
@@ -92,7 +92,7 @@ public class UserService : IUserService
             .FirstOrDefaultAsync(u => u.Id == dto.Id, cancellationToken);
 
         if (user is null)
-            return ServiceResult.Fail("User not found.");
+            return ServiceResult.Failure("User not found.");
 
         user.Email = dto.Email;
         user.DoctorId = dto.DoctorId;
@@ -108,17 +108,17 @@ public class UserService : IUserService
             user.UserRoles.Add(new UserRole { UserId = user.Id, RoleId = roleId });
 
         await _context.SaveChangesAsync(cancellationToken);
-        return ServiceResult.Ok();
+        return ServiceResult.Success();
     }
 
     public async Task<ServiceResult> SetActiveStatusAsync(int id, bool isActive, CancellationToken cancellationToken = default)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         if (user is null)
-            return ServiceResult.Fail("User not found.");
+            return ServiceResult.Failure("User not found.");
 
         user.IsActive = isActive;
         await _context.SaveChangesAsync(cancellationToken);
-        return ServiceResult.Ok();
+        return ServiceResult.Success();
     }
 }

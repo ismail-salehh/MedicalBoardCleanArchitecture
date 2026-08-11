@@ -1,9 +1,11 @@
 using MedicalBoard.Application.DTOs;
 using MedicalBoard.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalBoard.Web.Controllers;
 
+[Authorize]
 public class DepartmentsController : Controller
 {
     private readonly IDepartmentService _departmentService;
@@ -38,13 +40,13 @@ public class DepartmentsController : Controller
         if (!ModelState.IsValid) return View(dto);
 
         var result = await _departmentService.CreateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
             return View(dto);
         }
 
-        TempData["Success"] = "Department created.";
+        TempData["Succeeded"] = "Department created.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -71,13 +73,13 @@ public class DepartmentsController : Controller
         if (!ModelState.IsValid) return View(dto);
 
         var result = await _departmentService.UpdateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
             return View(dto);
         }
 
-        TempData["Success"] = "Department updated.";
+        TempData["Succeeded"] = "Department updated.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -86,8 +88,8 @@ public class DepartmentsController : Controller
     public async Task<IActionResult> ToggleActive(int id, bool isActive)
     {
         var result = await _departmentService.SetActiveStatusAsync(id, isActive);
-        TempData[result.Success ? "Success" : "Error"] =
-            result.Success ? "Department status updated." : result.Error;
+        TempData[result.Succeeded ? "Succeeded" : "Error"] =
+            result.Succeeded ? "Department status updated." : result.Error;
         return RedirectToAction(nameof(Index));
     }
 }

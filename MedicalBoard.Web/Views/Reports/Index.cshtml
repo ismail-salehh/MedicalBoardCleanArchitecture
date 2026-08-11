@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Reports";
+    var byDoctor = (List<MedicalBoard.Application.DTOs.AppointmentsByDoctorDto>)ViewBag.ByDoctor;
+    var byDepartment = (List<MedicalBoard.Application.DTOs.AppointmentsByDepartmentDto>)ViewBag.ByDepartment;
+    var byStatus = (List<MedicalBoard.Application.DTOs.AppointmentsByStatusDto>)ViewBag.ByStatus;
+    var noApptToday = (List<MedicalBoard.Application.DTOs.DoctorNoAppointmentsTodayDto>)ViewBag.NoAppointmentsToday;
+    var busiest = (List<MedicalBoard.Application.DTOs.BusiestDoctorDto>)ViewBag.Busiest;
+}
+
+<h2>Reports</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Appointments by Doctor</h4>
+        <table class="table table-sm"><tbody>
+        @foreach (var r in byDoctor) { <tr><td>@r.DoctorName</td><td>@r.AppointmentCount</td></tr> }
+        </tbody></table>
+    </div>
+    <div class="col-md-6">
+        <h4>Appointments by Department</h4>
+        <table class="table table-sm"><tbody>
+        @foreach (var r in byDepartment) { <tr><td>@r.DepartmentName</td><td>@r.AppointmentCount</td></tr> }
+        </tbody></table>
+    </div>
+    <div class="col-md-6">
+        <h4>Appointments by Status</h4>
+        <table class="table table-sm"><tbody>
+        @foreach (var r in byStatus) { <tr><td>@r.Status</td><td>@r.Count</td></tr> }
+        </tbody></table>
+    </div>
+    <div class="col-md-6">
+        <h4>Busiest Doctors</h4>
+        <table class="table table-sm"><tbody>
+        @foreach (var r in busiest) { <tr><td>@r.DoctorName</td><td>@r.TotalAppointments</td></tr> }
+        </tbody></table>
+    </div>
+    <div class="col-md-12">
+        <h4>Doctors With No Appointments Today</h4>
+        <table class="table table-sm"><tbody>
+        @foreach (var r in noApptToday) { <tr><td>@r.DoctorName</td><td>@r.Specialty</td></tr> }
+        </tbody></table>
+    </div>
+</div>

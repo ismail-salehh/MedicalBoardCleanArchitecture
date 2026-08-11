@@ -1,0 +1,15 @@
+@model List<MedicalBoard.Application.DTOs.PermissionDto>
+@{
+    ViewData["Title"] = "Permissions";
+}
+
+<h2>Permissions</h2>
+<table class="table table-striped">
+    <thead><tr><th>Code</th><th>Name</th><th>Description</th></tr></thead>
+    <tbody>
+    @foreach (var p in Model)
+    {
+        <tr><td><code>@p.Code</code></td><td>@p.Name</td><td>@p.Description</td></tr>
+    }
+    </tbody>
+</table>

@@ -2,17 +2,28 @@ namespace MedicalBoard.Application.Common;
 
 public class ServiceResult
 {
-    public bool Success { get; init; }
-    public string? Error { get; init; }
+    public bool Succeeded { get; protected set; }
+    public string? Error { get; protected set; }
+    public IReadOnlyList<string> Errors { get; protected set; } = Array.Empty<string>();
 
-    public static ServiceResult Ok() => new() { Success = true };
-    public static ServiceResult Fail(string error) => new() { Success = false, Error = error };
+    public static ServiceResult Success() => new() { Succeeded = true };
+    public static ServiceResult Failure(string error) => new() { Succeeded = false, Error = error, Errors = new[] { error } };
+    public static ServiceResult Failure(IEnumerable<string> errors)
+    {
+        var list = errors.ToList();
+        return new ServiceResult { Succeeded = false, Errors = list, Error = list.FirstOrDefault() };
+    }
 }
 
 public class ServiceResult<T> : ServiceResult
 {
-    public T? Data { get; init; }
+    public T? Data { get; private set; }
 
-    public static ServiceResult<T> Ok(T data) => new() { Success = true, Data = data };
-    public static new ServiceResult<T> Fail(string error) => new() { Success = false, Error = error };
+    public static ServiceResult<T> Success(T data) => new() { Succeeded = true, Data = data };
+    public new static ServiceResult<T> Failure(string error) => new() { Succeeded = false, Error = error, Errors = new[] { error } };
+    public new static ServiceResult<T> Failure(IEnumerable<string> errors)
+    {
+        var list = errors.ToList();
+        return new ServiceResult<T> { Succeeded = false, Errors = list, Error = list.FirstOrDefault() };
+    }
 }

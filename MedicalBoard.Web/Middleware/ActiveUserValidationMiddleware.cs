@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MedicalBoard.Web.Middleware;
 
-// If an authenticated user'"'"'s account was deactivated after the cookie was issued,
+// If an authenticated user's account was deactivated after the cookie was issued,
 // this middleware signs them out on the next request instead of trusting the stale claim.
 public class ActiveUserValidationMiddleware
 {

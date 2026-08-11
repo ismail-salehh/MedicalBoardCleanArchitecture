@@ -8,7 +8,7 @@ public static class DbInitializer
 {
     // Call this once at startup (e.g. right after app.Build(), behind an env check) to
     // guarantee a login-capable account exists. Safe to call repeatedly — it's idempotent.
-    public static async Task SeedAsync(ApplicationDbContext db)
+    public static async Task SeedAsync(ApplicationDbContext db, IPasswordHasher<User> hasher)
     {
         await db.Database.MigrateAsync();
 
@@ -21,7 +21,6 @@ public static class DbInitializer
         if (!await db.Users.AnyAsync(u => u.Username == "admin"))
         {
             var adminRole = await db.Roles.FirstAsync(r => r.Name == "Administrator");
-            var hasher = new PasswordHasher<User>();
 
             var admin = new User
             {

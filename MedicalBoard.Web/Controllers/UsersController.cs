@@ -1,7 +1,6 @@
 using MedicalBoard.Application.DTOs;
 using MedicalBoard.Application.Interfaces;
-// using MedicalBoard.Domain.Constants;
-using MedicalBoard.Domain.Entities;
+using MedicalBoard.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +18,14 @@ public class UsersController : Controller
         _roleService = roleService;
     }
 
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.UserView)]
     public async Task<IActionResult> Index()
     {
         var users = await _userService.GetAllAsync();
         return View(users);
     }
 
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.UserCreate)]
     public async Task<IActionResult> Create()
     {
         ViewBag.Roles = await _roleService.GetAllAsync();
@@ -35,7 +34,7 @@ public class UsersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.UserCreate)]
     public async Task<IActionResult> Create(CreateUserDto dto)
     {
         if (!ModelState.IsValid)
@@ -45,7 +44,7 @@ public class UsersController : Controller
         }
 
         var result = await _userService.CreateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
             ModelState.AddModelError(string.Empty, result.Error ?? "Unable to create user.");
             ViewBag.Roles = await _roleService.GetAllAsync();
@@ -56,7 +55,7 @@ public class UsersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.UserEdit)]
     public async Task<IActionResult> Edit(int id)
     {
         var user = await _userService.GetByIdAsync(id);
@@ -75,7 +74,7 @@ public class UsersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.UserEdit)]
     public async Task<IActionResult> Edit(UpdateUserDto dto)
     {
         if (!ModelState.IsValid)
@@ -85,7 +84,7 @@ public class UsersController : Controller
         }
 
         var result = await _userService.UpdateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
             ModelState.AddModelError(string.Empty, result.Error ?? "Unable to update user.");
             ViewBag.Roles = await _roleService.GetAllAsync();
@@ -98,7 +97,7 @@ public class UsersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize]
+    [Authorize(Policy = PermissionCodes.UserDeactivate)]
     public async Task<IActionResult> ToggleActive(int id, bool isActive)
     {
         await _userService.SetActiveStatusAsync(id, isActive);

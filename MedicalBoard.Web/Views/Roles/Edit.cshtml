@@ -1,0 +1,44 @@
+@model MedicalBoard.Application.DTOs.SaveRoleDto
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Edit Role" : "Create Role";
+    var permissions = (List<MedicalBoard.Application.DTOs.PermissionDto>)ViewBag.Permissions;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Save" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Permissions</label>
+        <div class="row">
+        @foreach (var permission in permissions)
+        {
+            <div class="col-md-4 form-check">
+                <input type="checkbox" class="form-check-input" name="PermissionIds" value="@permission.Id"
+                       checked="@Model.PermissionIds.Contains(permission.Id)" />
+                <label class="form-check-label">@permission.Code</label>
+            </div>
+        }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-link">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

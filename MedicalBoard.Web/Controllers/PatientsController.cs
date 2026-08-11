@@ -1,25 +1,29 @@
 using MedicalBoard.Application.DTOs;
 using MedicalBoard.Application.Interfaces;
+using MedicalBoard.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalBoard.Web.Controllers;
 
+[Authorize]
 public class PatientsController : Controller
 {
     private readonly IPatientService _patientService;
+    public PatientsController(IPatientService patientService) => _patientService = patientService;
 
-    public PatientsController(IPatientService patientService)
+    [Authorize(Policy = PermissionCodes.PatientView)]
+    public async Task<IActionResult> Index(string? term)
     {
-        _patientService = patientService;
-    }
+        ViewData["Term"] = term;
+        var patients = string.IsNullOrWhiteSpace(term)
+            ? await _patientService.GetAllAsync()
+            : await _patientService.SearchAsync(term);
 
-    public async Task<IActionResult> Index(string? search)
-    {
-        var patients = await _patientService.SearchAsync(search);
-        ViewBag.SearchTerm = search;
         return View(patients);
     }
 
+    [Authorize(Policy = PermissionCodes.PatientView)]
     public async Task<IActionResult> Details(int id)
     {
         var patient = await _patientService.GetByIdAsync(id);
@@ -27,28 +31,28 @@ public class PatientsController : Controller
         return View(patient);
     }
 
-    public IActionResult Create()
-    {
-        return View(new CreatePatientDto());
-    }
+    [Authorize(Policy = PermissionCodes.PatientCreate)]
+    public IActionResult Create() => View(new CreatePatientDto());
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = PermissionCodes.PatientCreate)]
     public async Task<IActionResult> Create(CreatePatientDto dto)
     {
         if (!ModelState.IsValid) return View(dto);
 
         var result = await _patientService.CreateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
-            ModelState.AddModelError(string.Empty, result.Error!);
+            ModelState.AddModelError(string.Empty, result.Error ?? "Unable to create patient.");
             return View(dto);
         }
 
-        TempData["Success"] = "Patient created.";
+        TempData["Success"] = "Patient created successfully.";
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Policy = PermissionCodes.PatientEdit)]
     public async Task<IActionResult> Edit(int id)
     {
         var patient = await _patientService.GetByIdAsync(id);
@@ -61,26 +65,25 @@ public class PatientsController : Controller
             NationalIdentifier = patient.NationalIdentifier,
             DateOfBirth = patient.DateOfBirth,
             Phone = patient.Phone,
-            Email = patient.Email,
-            IsActive = patient.IsActive
+            Email = patient.Email
         });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, UpdatePatientDto dto)
+    [Authorize(Policy = PermissionCodes.PatientEdit)]
+    public async Task<IActionResult> Edit(UpdatePatientDto dto)
     {
-        if (id != dto.Id) return BadRequest();
         if (!ModelState.IsValid) return View(dto);
 
         var result = await _patientService.UpdateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
-            ModelState.AddModelError(string.Empty, result.Error!);
+            ModelState.AddModelError(string.Empty, result.Error ?? "Unable to update patient.");
             return View(dto);
         }
 
-        TempData["Success"] = "Patient updated.";
+        TempData["Success"] = "Patient updated successfully.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -88,9 +91,7 @@ public class PatientsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleActive(int id, bool isActive)
     {
-        var result = await _patientService.SetActiveStatusAsync(id, isActive);
-        TempData[result.Success ? "Success" : "Error"] =
-            result.Success ? "Patient status updated." : result.Error;
+        await _patientService.SetActiveStatusAsync(id, isActive);
         return RedirectToAction(nameof(Index));
     }
 }

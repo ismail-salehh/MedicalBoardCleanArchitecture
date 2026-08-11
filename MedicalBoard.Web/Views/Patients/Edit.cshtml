@@ -1,11 +1,14 @@
-@model UpdatePatientDto
+@model MedicalBoard.Application.DTOs.UpdatePatientDto
 @{
     ViewData["Title"] = "Edit Patient";
 }
-<h1>Edit Patient</h1>
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<form method="post" class="col-md-6">
+
+<h2>Edit Patient</h2>
+
+<form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="mb-3">
         <label asp-for="FullName" class="form-label"></label>
         <input asp-for="FullName" class="form-control" />
@@ -17,7 +20,7 @@
     </div>
     <div class="mb-3">
         <label asp-for="DateOfBirth" class="form-label"></label>
-        <input asp-for="DateOfBirth" class="form-control" type="date" />
+        <input asp-for="DateOfBirth" type="date" class="form-control" />
     </div>
     <div class="mb-3">
         <label asp-for="Phone" class="form-label"></label>
@@ -28,10 +31,11 @@
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-    <div class="form-check mb-3">
-        <input asp-for="IsActive" class="form-check-input" />
-        <label asp-for="IsActive" class="form-check-label"></label>
-    </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
-    <a class="btn btn-link" asp-action="Index">Cancel</a>
+    <a asp-action="Index" class="btn btn-link">Cancel</a>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

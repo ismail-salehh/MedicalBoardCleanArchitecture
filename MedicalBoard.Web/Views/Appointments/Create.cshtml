@@ -1,8 +1,8 @@
 @model CreateAppointmentDto
 @{
     ViewData["Title"] = "New Appointment";
-    var doctors = ViewBag.Doctors as List<DoctorDto> ?? new();
-    var patients = ViewBag.Patients as List<PatientDto> ?? new();
+    var doctors = ViewBag.Doctors as List<DoctorListItemDto> ?? new();
+    var patients = ViewBag.Patients as List<PatientListItemDto> ?? new();
 }
 <h1>New Appointment</h1>
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>

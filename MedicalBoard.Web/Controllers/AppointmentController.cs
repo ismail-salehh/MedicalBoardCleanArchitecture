@@ -29,7 +29,7 @@ public class AppointmentsController : Controller
         var appointments = await _appointmentService.GetAllAsync(doctorId, patientId, status);
 
         ViewBag.Doctors = await _doctorService.GetAllAsync();
-        ViewBag.Patients = await _patientService.SearchAsync();
+        ViewBag.Patients = await _patientService.SearchAsync(string.Empty);
         ViewBag.SelectedDoctorId = doctorId;
         ViewBag.SelectedPatientId = patientId;
         ViewBag.SelectedStatus = status;
@@ -67,14 +67,14 @@ public class AppointmentsController : Controller
         }
 
         var result = await _appointmentService.CreateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
             await PopulateDropdownsAsync();
             return View(dto);
         }
 
-        TempData["Success"] = "Appointment created.";
+        TempData["Succeeded"] = "Appointment created.";
         return RedirectToAction(nameof(Details), new { id = result.Data });
     }
 
@@ -83,8 +83,8 @@ public class AppointmentsController : Controller
     public async Task<IActionResult> Confirm(int id)
     {
         var result = await _appointmentService.ConfirmAsync(id);
-        TempData[result.Success ? "Success" : "Error"] =
-            result.Success ? "Appointment confirmed." : result.Error;
+        TempData[result.Succeeded ? "Succeeded" : "Error"] =
+            result.Succeeded ? "Appointment confirmed." : result.Error;
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -93,8 +93,8 @@ public class AppointmentsController : Controller
     public async Task<IActionResult> Complete(int id)
     {
         var result = await _appointmentService.CompleteAsync(id);
-        TempData[result.Success ? "Success" : "Error"] =
-            result.Success ? "Appointment marked complete." : result.Error;
+        TempData[result.Succeeded ? "Succeeded" : "Error"] =
+            result.Succeeded ? "Appointment marked complete." : result.Error;
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -113,19 +113,19 @@ public class AppointmentsController : Controller
         if (!ModelState.IsValid) return View(dto);
 
         var result = await _appointmentService.CancelAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
             return View(dto);
         }
 
-        TempData["Success"] = "Appointment cancelled.";
+        TempData["Succeeded"] = "Appointment cancelled.";
         return RedirectToAction(nameof(Details), new { id = dto.Id });
     }
 
     private async Task PopulateDropdownsAsync()
     {
-        ViewBag.Doctors = (await _doctorService.GetAllAsync(isActive: true)).ToList();
-        ViewBag.Patients = (await _patientService.SearchAsync()).Where(p => p.IsActive).ToList();
+        ViewBag.Doctors = await _doctorService.GetActiveDoctorsAsync();
+        ViewBag.Patients = (await _patientService.SearchAsync(string.Empty)).Where(p => p.IsActive).ToList();
     }
 }

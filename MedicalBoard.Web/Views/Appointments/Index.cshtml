@@ -1,7 +1,8 @@
 @model List<AppointmentDto>
 @{
     ViewData["Title"] = "Appointments";
-    var doctors = ViewBag.Doctors as List<DoctorDto> ?? new();
+    var doctors = ViewBag.Doctors as List<DoctorListItemDto> ?? new();
+    var patients = ViewBag.Patients as List<PatientListItemDto> ?? new();
     var counts = ViewBag.StatusCounts as Dictionary<AppointmentStatus, int> ?? new();
 }
 <div class="d-flex justify-content-between align-items-center mb-3">

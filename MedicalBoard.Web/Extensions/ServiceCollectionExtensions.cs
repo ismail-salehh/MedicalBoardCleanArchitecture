@@ -1,27 +1,3 @@
-bash
-
-bash -c '
-cd /home/claude/MedicalBoard
-
-cat > Web/Extensions/MiddlewareExtensions.cs << "EOF"
-using MedicalBoard.Web.Middleware;
-
-namespace MedicalBoard.Web.Extensions;
-
-public static class MiddlewareExtensions
-{
-    public static IApplicationBuilder UseGlobalExceptionHandling(this IApplicationBuilder app)
-        => app.UseMiddleware<GlobalExceptionMiddleware>();
-
-    public static IApplicationBuilder UseRequestLogging(this IApplicationBuilder app)
-        => app.UseMiddleware<RequestLoggingMiddleware>();
-
-    public static IApplicationBuilder UseActiveUserValidation(this IApplicationBuilder app)
-        => app.UseMiddleware<ActiveUserValidationMiddleware>();
-}
-EOF
-
-cat > Web/Extensions/ServiceCollectionExtensions.cs << "EOF"
 using MedicalBoard.Application.Authorization;
 using MedicalBoard.Application.Interfaces;
 using MedicalBoard.Application.Services;
@@ -42,7 +18,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMedicalBoardPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         // DIP: application services depend on IApplicationDbContext, not the concrete DbContext.
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
@@ -58,9 +34,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IDoctorService, DoctorService>();
+        services.AddScoped<IPatientService, PatientService>();
 
-        // NOTE: keep your existing registrations for IDepartmentService, IDoctorService,
-        // IPatientService and IAppointmentService from Milestone 2 alongside these.
+        // NOTE: keep your existing registrations for IDepartmentService and
+        // IAppointmentService from Milestone 2 alongside these.
 
         services.AddScoped<IUserPermissionProvider, EfUserPermissionProvider>();
         services.AddHttpContextAccessor();
@@ -117,12 +95,3 @@ public static class ServiceCollectionExtensions
         return services;
     }
 }
-EOF
-echo "extensions ok"
-'
-Output
-
-extensions ok
-Done
-
-

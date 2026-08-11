@@ -41,18 +41,18 @@ public class AccountController : Controller
             return View(model);
 
         var result = await _authService.ValidateCredentialsAsync(model.Username, model.Password);
-        if (!result.Success || result.Data is null)
+        if (!result.Succeeded || result.Data is null)
         {
             ModelState.AddModelError(string.Empty, result.Error ?? "Invalid login attempt.");
             return View(model);
         }
 
         var user = result.Data;
-        var permissions = await _permissionProvider.GetPermissionsAsync(user.Id);
+        var permissions = await _permissionProvider.GetPermissionsAsync(user.UserId);
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Email, user.Email)
         };
@@ -70,7 +70,7 @@ public class AccountController : Controller
             ExpiresUtc = DateTimeOffset.UtcNow.AddHours(model.RememberMe ? 24 * 14 : 8)
         });
 
-        await _authService.RecordLoginAsync(user.Id);
+        await _authService.RecordLoginAsync(user.UserId);
 
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);

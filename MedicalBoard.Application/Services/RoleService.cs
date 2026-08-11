@@ -50,7 +50,7 @@ public class RoleService : IRoleService
     {
         var nameTaken = await _context.Roles.AnyAsync(r => r.Name == dto.Name && r.Id != dto.Id, cancellationToken);
         if (nameTaken)
-            return ServiceResult<int>.Fail("A role with this name already exists.");
+            return ServiceResult<int>.Failure("A role with this name already exists.");
 
         Role role;
         if (dto.Id.HasValue)
@@ -60,7 +60,7 @@ public class RoleService : IRoleService
                 .FirstOrDefaultAsync(r => r.Id == dto.Id.Value, cancellationToken);
 
             if (existing is null)
-                return ServiceResult<int>.Fail("Role not found.");
+                return ServiceResult<int>.Failure("Role not found.");
 
             role = existing;
             role.Name = dto.Name;
@@ -85,6 +85,6 @@ public class RoleService : IRoleService
         }
 
         await _context.SaveChangesAsync(cancellationToken);
-        return ServiceResult<int>.Ok(role.Id);
+        return ServiceResult<int>.Success(role.Id);
     }
 }

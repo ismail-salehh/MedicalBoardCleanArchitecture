@@ -1,0 +1,25 @@
+@model List<MedicalBoard.Application.DTOs.RoleListItemDto>
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Roles</h2>
+    <a asp-action="Create" class="btn btn-primary">New Role</a>
+</div>
+
+<table class="table table-striped">
+    <thead><tr><th>Name</th><th>Description</th><th>Users</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var role in Model)
+    {
+        <tr>
+            <td>@role.Name</td>
+            <td>@role.Description</td>
+            <td>@role.UserCount</td>
+            <td>@(role.IsActive ? "Active" : "Inactive")</td>
+            <td><a asp-action="Edit" asp-route-id="@role.Id" class="btn btn-sm btn-outline-primary">Edit</a></td>
+        </tr>
+    }
+    </tbody>
+</table>

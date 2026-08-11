@@ -2,16 +2,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MedicalBoard.Application.DTOs;
 
-public class PatientDto
+public class PatientListItemDto
 {
     public int Id { get; set; }
     public string PatientNumber { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
+    public string? Phone { get; set; }
+    public bool IsActive { get; set; }
+}
+
+public class PatientDetailDto : PatientListItemDto
+{
     public string? NationalIdentifier { get; set; }
     public DateOnly? DateOfBirth { get; set; }
-    public string? Phone { get; set; }
     public string? Email { get; set; }
-    public bool IsActive { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 public class CreatePatientDto
@@ -24,7 +29,7 @@ public class CreatePatientDto
 
     public DateOnly? DateOfBirth { get; set; }
 
-    [Phone, StringLength(30)]
+    [StringLength(30)]
     public string? Phone { get; set; }
 
     [EmailAddress, StringLength(200)]
@@ -43,11 +48,9 @@ public class UpdatePatientDto
 
     public DateOnly? DateOfBirth { get; set; }
 
-    [Phone, StringLength(30)]
+    [StringLength(30)]
     public string? Phone { get; set; }
 
     [EmailAddress, StringLength(200)]
     public string? Email { get; set; }
-
-    public bool IsActive { get; set; }
 }

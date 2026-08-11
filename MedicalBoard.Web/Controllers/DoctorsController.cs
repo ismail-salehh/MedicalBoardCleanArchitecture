@@ -1,13 +1,17 @@
 using MedicalBoard.Application.DTOs;
 using MedicalBoard.Application.Interfaces;
+using MedicalBoard.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicalBoard.Web.Controllers;
 
+[Authorize]
 public class DoctorsController : Controller
 {
     private readonly IDoctorService _doctorService;
     private readonly IDepartmentService _departmentService;
+
 
     public DoctorsController(IDoctorService doctorService, IDepartmentService departmentService)
     {
@@ -15,15 +19,14 @@ public class DoctorsController : Controller
         _departmentService = departmentService;
     }
 
-    public async Task<IActionResult> Index(int? departmentId, bool? isActive)
+    [Authorize(Policy = PermissionCodes.DoctorView)]
+    public async Task<IActionResult> Index(bool includeInactive = false)
     {
-        var doctors = await _doctorService.GetAllAsync(departmentId, isActive);
-        ViewBag.Departments = await _departmentService.GetAllAsync();
-        ViewBag.SelectedDepartmentId = departmentId;
-        ViewBag.SelectedIsActive = isActive;
+        var doctors = await _doctorService.GetAllAsync(includeInactive);
         return View(doctors);
     }
 
+    [Authorize(Policy = PermissionCodes.DoctorView)]
     public async Task<IActionResult> Details(int id)
     {
         var doctor = await _doctorService.GetByIdAsync(id);
@@ -31,88 +34,68 @@ public class DoctorsController : Controller
         return View(doctor);
     }
 
-    public async Task<IActionResult> Create()
-    {
-        await PopulateDepartmentsAsync();
-        return View(new CreateDoctorDto());
-    }
+    [Authorize(Policy = PermissionCodes.DoctorCreate)]
+    public IActionResult Create() => View(new CreateDoctorDto());
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = PermissionCodes.DoctorCreate)]
     public async Task<IActionResult> Create(CreateDoctorDto dto)
     {
-        if (!ModelState.IsValid)
-        {
-            await PopulateDepartmentsAsync();
-            return View(dto);
-        }
+        if (!ModelState.IsValid) return View(dto);
 
         var result = await _doctorService.CreateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
-            ModelState.AddModelError(string.Empty, result.Error!);
-            await PopulateDepartmentsAsync();
+            ModelState.AddModelError(string.Empty, result.Error ?? "Unable to create doctor.");
             return View(dto);
         }
 
-        TempData["Success"] = "Doctor created.";
+        TempData["Success"] = "Doctor created successfully.";
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Policy = PermissionCodes.DoctorEdit)]
     public async Task<IActionResult> Edit(int id)
     {
         var doctor = await _doctorService.GetByIdAsync(id);
         if (doctor is null) return NotFound();
 
-        await PopulateDepartmentsAsync();
         return View(new UpdateDoctorDto
         {
             Id = doctor.Id,
-            EmployeeNumber = doctor.EmployeeNumber,
             FullName = doctor.FullName,
             Specialty = doctor.Specialty,
             Phone = doctor.Phone,
             Email = doctor.Email,
-            DepartmentId = doctor.DepartmentId,
-            IsActive = doctor.IsActive
+            DepartmentId = doctor.DepartmentId
         });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, UpdateDoctorDto dto)
+    [Authorize(Policy = PermissionCodes.DoctorEdit)]
+    public async Task<IActionResult> Edit(UpdateDoctorDto dto)
     {
-        if (id != dto.Id) return BadRequest();
-        if (!ModelState.IsValid)
-        {
-            await PopulateDepartmentsAsync();
-            return View(dto);
-        }
+        if (!ModelState.IsValid) return View(dto);
 
         var result = await _doctorService.UpdateAsync(dto);
-        if (!result.Success)
+        if (!result.Succeeded)
         {
-            ModelState.AddModelError(string.Empty, result.Error!);
-            await PopulateDepartmentsAsync();
+            ModelState.AddModelError(string.Empty, result.Error ?? "Unable to update doctor.");
             return View(dto);
         }
 
-        TempData["Success"] = "Doctor updated.";
+        TempData["Success"] = "Doctor updated successfully.";
         return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = PermissionCodes.DoctorDeactivate)]
     public async Task<IActionResult> ToggleActive(int id, bool isActive)
     {
-        var result = await _doctorService.SetActiveStatusAsync(id, isActive);
-        TempData[result.Success ? "Success" : "Error"] =
-            result.Success ? "Doctor status updated." : result.Error;
+        await _doctorService.SetActiveStatusAsync(id, isActive);
         return RedirectToAction(nameof(Index));
-    }
-
-    private async Task PopulateDepartmentsAsync()
-    {
-        ViewBag.Departments = (await _departmentService.GetAllAsync()).Where(d => d.IsActive).ToList();
     }
 }

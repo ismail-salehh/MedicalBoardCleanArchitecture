@@ -19,8 +19,21 @@ public class AppointmentDto
 
 public class CreateAppointmentDto
 {
+    private int _doctorId;
+
     [Required(ErrorMessage = "Please select a doctor.")]
-    public int DoctorId { get; set; }
+    public int DoctorId
+    {
+        get => _doctorId;
+        set
+        {
+            if (value <= 0)
+            {
+                throw new ValidationException("DoctorId must be a positive integer.");
+            }
+            _doctorId = value;
+        }
+    }
 
     [Required(ErrorMessage = "Please select a patient.")]
     public int PatientId { get; set; }

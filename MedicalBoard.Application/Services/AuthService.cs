@@ -26,18 +26,18 @@ public class AuthService : IAuthService
             .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
 
         if (user is null)
-            return ServiceResult<AuthenticatedUserDto>.Fail("Invalid username or password.");
+            return ServiceResult<AuthenticatedUserDto>.Failure("Invalid username or password.");
 
         if (!user.IsActive)
-            return ServiceResult<AuthenticatedUserDto>.Fail("This account has been deactivated.");
+            return ServiceResult<AuthenticatedUserDto>.Failure("This account has been deactivated.");
 
         var verification = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
         if (verification == PasswordVerificationResult.Failed)
-            return ServiceResult<AuthenticatedUserDto>.Fail("Invalid username or password.");
+            return ServiceResult<AuthenticatedUserDto>.Failure("Invalid username or password.");
 
         var dto = new AuthenticatedUserDto
         {
-            Id = user.Id,
+            UserId = user.Id,
             Username = user.Username,
             Email = user.Email,
             DoctorId = user.DoctorId,
@@ -45,7 +45,7 @@ public class AuthService : IAuthService
             Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
         };
 
-        return ServiceResult<AuthenticatedUserDto>.Ok(dto);
+        return ServiceResult<AuthenticatedUserDto>.Success(dto);
     }
 
     public async Task RecordLoginAsync(int userId, CancellationToken cancellationToken = default)
