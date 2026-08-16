@@ -94,9 +94,6 @@ public class AppointmentService : IAppointmentService
         if (!patient.IsActive)
             return ServiceResult<int>.Failure("Cannot book an appointment for an inactive patient.");
 
-        // Proactive checks -- the unique indexes on (DoctorId, AppointmentDate) and
-        // (PatientId, AppointmentDate) are the real guarantee, but we check here first
-        // to return a friendly message instead of surfacing a raw DbUpdateException.
         var doctorBusy = await _context.Appointments.AnyAsync(a =>
             a.DoctorId == dto.DoctorId &&
             a.AppointmentDate == dto.AppointmentDate &&
