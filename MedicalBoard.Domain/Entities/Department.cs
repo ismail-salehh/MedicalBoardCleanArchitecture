@@ -10,6 +10,6 @@ public class Department
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public ICollection<Doctor> Doctors { get; set; } = new List<Doctor>();
-    public ICollection<User> Users { get; set; } = new List<User>();
+    public IList<Doctor> Doctors { get; set; } = new List<Doctor>();
+    public IEnumerable<User> Users { get; set; } = new List<User>();
 }

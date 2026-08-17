@@ -132,7 +132,6 @@ public static class DbInitializer
             }
             else
             {
-                // Keep the database definition synchronized with the code.
                 permission.Name = name;
                 permission.Description = description;
                 permission.IsActive = true;

@@ -23,7 +23,7 @@ public class Appointment
     public int CreatedByUserId { get; set; }
     public User CreatedByUser { get; set; } = null!;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.Today;
     public DateTime? UpdatedAt { get; set; }
 
     public DateTime? CancelledAt { get; set; }

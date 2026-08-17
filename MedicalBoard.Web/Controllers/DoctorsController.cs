@@ -10,13 +10,11 @@ namespace MedicalBoard.Web.Controllers;
 public class DoctorsController : Controller
 {
     private readonly IDoctorService _doctorService;
-    private readonly IDepartmentService _departmentService;
 
 
-    public DoctorsController(IDoctorService doctorService, IDepartmentService departmentService)
+    public DoctorsController(IDoctorService doctorService)
     {
         _doctorService = doctorService;
-        _departmentService = departmentService;
     }
 
     [Authorize(Policy = PermissionCodes.DoctorView)]

@@ -1,6 +1,3 @@
 <Solution>
-  <Project Path="MedicalBoard.Application/MedicalBoard.Application.csproj" />
-  <Project Path="MedicalBoard.Domain/MedicalBoard.Domain.csproj" />
-  <Project Path="MedicalBoard.Infrastructure/MedicalBoard.Infrastructure.csproj" />
   <Project Path="MedicalBoard.Web/MedicalBoard.Web.csproj" />
 </Solution>
